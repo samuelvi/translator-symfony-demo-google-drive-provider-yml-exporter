@@ -1,0 +1,14 @@
+services:
+  php-atic-gy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /app
+    volumes:
+      - ../:/app
+      - ./php/php.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+
+    # Keep the container running in the background
+    command: tail -f /dev/null
+    environment:
+      - PHP_IDE_CONFIG=serverName=PHPSTORM

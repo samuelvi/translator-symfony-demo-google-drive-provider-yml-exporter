@@ -1,0 +1,42 @@
+{
+  "name": "samuelvi/translator-symfony-demo-googledrive-to-yml",
+  "license": "MIT",
+  "type": "project",
+  "description": "Spreadsheet Translator. Symfony Demo Application. Takes a Google Drive spreadsheet and creates translation files per locale in YAML format",
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/App"
+    }
+  },
+  "require": {
+    "php": ">=8.4",
+    "samuelvi/spreadsheet-translator-core": "^8.0",
+    "samuelvi/spreadsheet-translator-symfony-bundle": "^8.0",
+    "samuelvi/spreadsheet-translator-provider-googledrive": "^8.0",
+    "samuelvi/spreadsheet-translator-reader-xlsx": "^8.1",
+    "samuelvi/spreadsheet-translator-exporter-yml": "^8.0",
+    "symfony/console": "^7.0",
+    "symfony/dotenv": "^7.0",
+    "symfony/filesystem": "^7.0",
+    "symfony/finder": "^7.0",
+    "symfony/framework-bundle": "^7.0",
+    "symfony/http-foundation": "^7.0",
+    "symfony/http-kernel": "^7.0",
+    "symfony/routing": "^7.0",
+    "symfony/runtime": "^7.0",
+    "symfony/security-bundle": "^7.0",
+    "symfony/translation": "^7.0",
+    "symfony/yaml": "^7.0",
+    "symfony/monolog-bundle" : "3.10.0"
+  },
+  "require-dev": {
+    "rector/jack": "^0.2.9",
+    "rector/rector": "^2.1"
+  },
+  "config": {
+    "bin-dir": "bin",
+    "allow-plugins": {
+      "symfony/runtime": true
+    }
+  }
+}

@@ -1,0 +1,8 @@
+vendor
+.claude
+.idea
+var
+.DS_Store
+
+translations/*
+!translations/.gitignore

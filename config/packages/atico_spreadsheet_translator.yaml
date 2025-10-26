@@ -1,0 +1,13 @@
+atico_spreadsheet_translator:
+    frontend:
+        provider:
+            name: 'google_drive'
+            source_resource: 'https://docs.google.com/spreadsheets/d/1MgpsX-UXVVx1UAmbQvKrrE8yvWBt62haKuBieyOL_cE/edit#gid=0'
+        exporter:
+            format: 'yml'
+            prefix: 'demo_'
+            destination_folder: '%kernel.project_dir%/translations'
+        shared:
+            # Optional => temp_local_source_file: '%kernel.project_dir%/downloaded_resource.xls'
+            default_locale: 'en'
+            name_separator: '_'

@@ -1,0 +1,12 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\:
+        resource: '../src/App'
+        exclude:
+            - '../src/App/Kernel.php'
+
+    # Alias for autowiring the SpreadsheetTranslator service
+    Atico\SpreadsheetTranslator\Core\SpreadsheetTranslator: '@atico.spreadsheet_translator.manager'
