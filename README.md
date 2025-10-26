@@ -63,10 +63,9 @@ demo_common.en_GB.yml will contain:
 ```yaml
 homepage:
     title: >
-        Spreadsheet translator
-homepage:
+        Secured Spreadsheet translator
     subtitle: >
-        Translator of web pages from spreadsheets
+        Translator of web pages from secured spreadsheet
 ```
 
 Notes
