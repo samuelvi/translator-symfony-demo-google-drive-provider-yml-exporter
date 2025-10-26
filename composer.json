@@ -10,7 +10,7 @@
   },
   "require": {
     "php": ">=8.4",
-    "samuelvi/spreadsheet-translator-core": "^8.0",
+    "samuelvi/spreadsheet-translator-core": "^8.4",
     "samuelvi/spreadsheet-translator-symfony-bundle": "^8.0",
     "samuelvi/spreadsheet-translator-provider-googledrive": "^8.0",
     "samuelvi/spreadsheet-translator-reader-xlsx": "^8.1",
