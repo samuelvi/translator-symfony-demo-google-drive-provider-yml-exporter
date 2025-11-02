@@ -46,13 +46,13 @@ jobs:
         run: mkdir -p translations
 
       - name: Run Unit Tests
-        run: vendor/bin/phpunit --testsuite "Unit Tests" --colors=always
+        run: bin/phpunit --testsuite "Unit Tests" --colors=always
 
       - name: Run Integration Tests (without network)
-        run: vendor/bin/phpunit --testsuite "Integration Tests" --exclude-group network --colors=always
+        run: bin/phpunit --testsuite "Integration Tests" --exclude-group network --colors=always
 
       - name: Run Functional Tests (without network)
-        run: vendor/bin/phpunit --testsuite "Functional Tests" --exclude-group network --colors=always
+        run: bin/phpunit --testsuite "Functional Tests" --exclude-group network --colors=always
 
   code-quality:
     name: Code Quality
@@ -72,4 +72,4 @@ jobs:
         run: composer install --prefer-dist --no-progress --no-interaction
 
       - name: Run Rector (dry-run)
-        run: vendor/rector/rector/bin/rector process --dry-run
+        run: bin/rector process --dry-run
