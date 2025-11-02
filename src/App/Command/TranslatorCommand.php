@@ -22,7 +22,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * Reference command:
  * INSIDE DOCKER: XDEBUG_SESSION=PHPSTORM bin/console atico:demo:translator --sheet-name=common --book-name=frontend --env=dev
- * FROM HOST: docker-compose -f docker/docker-compose.yaml exec php-atic sh -c "XDEBUG_SESSION=PHPSTORM php bin/console atico:demo:translator --sheet-name=common --book-name=frontend --env=dev"
+ * FROM HOST: docker-compose -f docker/docker-compose.yaml exec php-atic-gy sh -c "XDEBUG_SESSION=PHPSTORM php bin/console atico:demo:translator --sheet-name=common --book-name=frontend --env=dev"
  */
 #[AsCommand(
     name: 'atico:demo:translator',

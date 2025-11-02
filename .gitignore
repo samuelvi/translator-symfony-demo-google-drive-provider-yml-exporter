@@ -1,8 +1,13 @@
 vendor
 .claude
 .idea
-var
+/var/*
 .DS_Store
 
 translations/*
 !translations/.gitignore
+
+# PHPUnit
+.phpunit.cache
+coverage/
+phpunit.xml

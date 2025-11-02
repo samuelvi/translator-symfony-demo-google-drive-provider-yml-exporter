@@ -52,10 +52,10 @@ This command will generate the translation files that will be stored into the `t
 The generated files will be:
 
 ```
-  translations
-     │  demo_common.en_GB.yml
-     │  demo_common.es_ES.yml
-     │  demo_common.fr_FR.yml
+translations/
+├── demo_common.en_GB.yml
+├── demo_common.es_ES.yml
+└── demo_common.fr_FR.yml
 ```
 
 demo_common.en_GB.yml will contain:
@@ -73,10 +73,10 @@ Notes
 
 composer.json includes the following Spreadsheet Translator dependencies:
 ```json
-  "samuelvi/spreadsheet-translator-core": "^8.0",
+  "samuelvi/spreadsheet-translator-core": "^8.4",
   "samuelvi/spreadsheet-translator-symfony-bundle": "^8.0",
   "samuelvi/spreadsheet-translator-provider-googledrive": "^8.0",
-  "samuelvi/spreadsheet-translator-reader-xlsx": "^8.0",
+  "samuelvi/spreadsheet-translator-reader-xlsx": "^8.1",
   "samuelvi/spreadsheet-translator-exporter-yml": "^8.0"
 ```
 
@@ -89,7 +89,7 @@ Symfony Bundle:
 Symfony Demos:
 
 - <a href="https://github.com/samuelvi/translator-symfony-demo-local-file-to-php">Symfony Demo. Takes a local file and creates translation files per locale in php format</a>
-- <a href="https://github.com/samuelvi/translator-symfony-demo-google-to-yml">Symfony Demo. Takes a google drive spreadsheet and creates translation files per locale in yml format</a>
+- <a href="https://github.com/samuelvi/translator-symfony-demo-google-drive-provider-yml-exporter">Symfony Demo. Takes a google drive spreadsheet and creates translation files per locale in yml format</a>
 - <a href="https://github.com/samuelvi/translator-symfony-demo-onedrive-to-xliff">Symfony Demo. Takes a microsoft one drive spreadsheet and creates translation files per locale in xliff format</a>
 
 
@@ -103,6 +103,57 @@ Requirements
 Development
 -----------
 
+### Testing
+
+This project includes a comprehensive test suite with unit, integration, and functional tests.
+
+**Run all tests:**
+
+```bash
+make test
+# or locally without Docker
+make test-local
+```
+
+**Run specific test suites:**
+
+```bash
+# Unit tests only
+make test-unit
+
+# Integration tests only
+make test-integration
+
+# Functional tests only
+make test-functional
+
+# Generate coverage report
+make test-coverage
+```
+
+**Run tests with PHPUnit directly:**
+
+```bash
+vendor/bin/phpunit
+
+# Run specific test suite
+vendor/bin/phpunit --testsuite "Unit Tests"
+
+# Exclude network tests (for offline development)
+vendor/bin/phpunit --exclude-group network
+
+# Run specific test file
+vendor/bin/phpunit tests/Unit/Command/TranslatorCommandTest.php
+```
+
+**Test Structure:**
+- `tests/Unit/` - Unit tests (isolated component testing with mocks)
+- `tests/Integration/` - Integration tests (testing with real services)
+- `tests/Functional/` - Functional tests (end-to-end user scenarios)
+- `tests/Fixtures/` - Test fixtures and sample data
+
+For detailed testing documentation, see [tests/README.md](tests/README.md).
+
 ### Code Quality with Rector
 
 This project uses [Rector](https://github.com/rectorphp/rector) to maintain PHP 8.4 compliance and code quality standards.
@@ -110,12 +161,16 @@ This project uses [Rector](https://github.com/rectorphp/rector) to maintain PHP 
 **Run Rector to check for potential improvements:**
 
 ```bash
+make rector-check
+# or
 vendor/rector/rector/bin/rector process --dry-run
 ```
 
 **Apply Rector changes:**
 
 ```bash
+make rector-fix
+# or
 vendor/rector/rector/bin/rector process
 ```
 
