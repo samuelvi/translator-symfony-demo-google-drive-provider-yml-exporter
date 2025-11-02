@@ -27,7 +27,7 @@
     "symfony/security-bundle": "^7.0",
     "symfony/translation": "^7.0",
     "symfony/yaml": "^7.0",
-    "symfony/monolog-bundle" : "3.10.0"
+    "symfony/monolog-bundle" : "^3.10"
   },
   "require-dev": {
     "rector/jack": "^0.2.9",

@@ -12,7 +12,7 @@ composer install
 make test
 
 # Run tests locally (no Docker)
-vendor/bin/phpunit
+bin/phpunit
 ```
 
 ## 📋 Common Commands
@@ -21,7 +21,7 @@ vendor/bin/phpunit
 ```bash
 make test                    # With Docker
 make test-local              # Without Docker
-vendor/bin/phpunit          # Direct PHPUnit
+bin/phpunit                  # Direct PHPUnit
 ```
 
 ### Run Specific Test Suites
@@ -33,17 +33,17 @@ make test-functional        # Functional tests only
 
 ### Run Offline (Skip Network Tests)
 ```bash
-vendor/bin/phpunit --exclude-group network
+bin/phpunit --exclude-group network
 ```
 
 ### Run Specific Test File
 ```bash
-vendor/bin/phpunit tests/Unit/Command/TranslatorCommandTest.php
+bin/phpunit tests/Unit/Command/TranslatorCommandTest.php
 ```
 
 ### Run Specific Test Method
 ```bash
-vendor/bin/phpunit --filter testExecuteWithBothOptions
+bin/phpunit --filter testExecuteWithBothOptions
 ```
 
 ### Generate Coverage Report
@@ -56,27 +56,27 @@ open coverage/index.html
 
 ### Stop on First Failure
 ```bash
-vendor/bin/phpunit --stop-on-failure
+bin/phpunit --stop-on-failure
 ```
 
 ### Verbose Output
 ```bash
-vendor/bin/phpunit --verbose
+bin/phpunit --verbose
 ```
 
 ### Debug Mode
 ```bash
-vendor/bin/phpunit --debug
+bin/phpunit --debug
 ```
 
 ### List All Tests
 ```bash
-vendor/bin/phpunit --list-tests
+bin/phpunit --list-tests
 ```
 
 ### Test Specific Group
 ```bash
-vendor/bin/phpunit --group network
+bin/phpunit --group network
 ```
 
 ## 📂 Test File Locations
@@ -107,28 +107,28 @@ tests/
 ### 1. Run Fast Tests First
 ```bash
 # Unit tests are fastest
-vendor/bin/phpunit --testsuite "Unit Tests"
+bin/phpunit --testsuite "Unit Tests"
 
 # Then integration without network
-vendor/bin/phpunit --testsuite "Integration Tests" --exclude-group network
+bin/phpunit --testsuite "Integration Tests" --exclude-group network
 ```
 
 ### 2. Debugging Failed Tests
 ```bash
 # Stop on failure and show details
-vendor/bin/phpunit --stop-on-failure --verbose
+bin/phpunit --stop-on-failure --verbose
 ```
 
 ### 3. Watch Mode (Manual)
 ```bash
 # Run tests on file change (requires entr or similar)
-find tests/ src/ -name "*.php" | entr vendor/bin/phpunit
+find tests/ src/ -name "*.php" | entr bin/phpunit
 ```
 
 ### 4. Check Test Configuration
 ```bash
 # Verify PHPUnit configuration
-vendor/bin/phpunit --configuration phpunit.xml.dist --list-tests
+bin/phpunit --configuration phpunit.xml.dist --list-tests
 ```
 
 ### 5. Clear Test Cache
@@ -147,7 +147,7 @@ rm -rf .phpunit.cache
 ### Network Tests Timeout?
 ```bash
 # Skip network tests
-vendor/bin/phpunit --exclude-group network
+bin/phpunit --exclude-group network
 ```
 
 ### Service Not Found?
@@ -260,7 +260,7 @@ make test
 make rector-check
 
 # 3. Verify no network dependency in unit tests
-vendor/bin/phpunit --testsuite "Unit Tests"
+bin/phpunit --testsuite "Unit Tests"
 ```
 
 ---
