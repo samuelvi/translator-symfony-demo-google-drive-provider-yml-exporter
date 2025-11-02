@@ -11,6 +11,8 @@
 
 namespace App\Tests\Fixtures;
 
+use Symfony\Component\Yaml\Yaml;
+use Exception;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -98,9 +100,9 @@ trait TestHelperTrait
         $this->assertNotEmpty($content, 'File should not be empty');
 
         try {
-            $data = \Symfony\Component\Yaml\Yaml::parse($content);
+            $data = Yaml::parse($content);
             $this->assertIsArray($data, 'YAML should parse to an array');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->fail('File is not valid YAML: ' . $e->getMessage());
         }
     }
@@ -127,8 +129,8 @@ trait TestHelperTrait
             ],
         ];
 
-        $data = empty($content) ? $defaultContent : $content;
-        $yamlContent = \Symfony\Component\Yaml\Yaml::dump($data);
+        $data = $content === [] ? $defaultContent : $content;
+        $yamlContent = Yaml::dump($data);
 
         $filesystem->dumpFile($path, $yamlContent);
     }
@@ -221,7 +223,7 @@ trait TestHelperTrait
     {
         $this->assertFileExists($filePath);
 
-        $data = \Symfony\Component\Yaml\Yaml::parseFile($filePath);
+        $data = Yaml::parseFile($filePath);
         $keys = explode('.', $key);
         $current = $data;
 

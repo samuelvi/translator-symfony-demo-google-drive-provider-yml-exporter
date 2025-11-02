@@ -11,6 +11,9 @@
 
 namespace App\Tests\Integration;
 
+use Override;
+use Exception;
+use Throwable;
 use App\Command\TranslatorCommand;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Application;
@@ -43,6 +46,7 @@ class TranslationWorkflowTest extends KernelTestCase
         $this->commandTester = new CommandTester($command);
     }
 
+    #[Override]
     protected function tearDown(): void
     {
         // Clean up generated translation files after each test
@@ -90,7 +94,7 @@ class TranslationWorkflowTest extends KernelTestCase
 
             $output = $this->commandTester->getDisplay();
             $this->assertStringContainsString('Translation text for', $output);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->markTestSkipped('Network test failed - Google Drive may be unavailable: ' . $e->getMessage());
         }
     }
@@ -116,7 +120,7 @@ class TranslationWorkflowTest extends KernelTestCase
                 $this->assertFileExists($file->getRealPath());
                 $this->assertFileIsReadable($file->getRealPath());
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->markTestSkipped('Network test failed: ' . $e->getMessage());
         }
     }
@@ -144,7 +148,7 @@ class TranslationWorkflowTest extends KernelTestCase
                 $this->assertIsArray($data, 'YAML content should parse to an array');
                 $this->assertNotEmpty($data, 'Parsed YAML should not be empty');
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->markTestSkipped('Network test failed: ' . $e->getMessage());
         }
     }
@@ -174,7 +178,7 @@ class TranslationWorkflowTest extends KernelTestCase
                     $this->assertArrayHasKey('title', $data['homepage'], 'homepage should contain title key');
                 }
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->markTestSkipped('Network test failed: ' . $e->getMessage());
         }
     }
@@ -203,7 +207,7 @@ class TranslationWorkflowTest extends KernelTestCase
                     'Filename should match pattern: demo_common.{locale}.yml'
                 );
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->markTestSkipped('Network test failed: ' . $e->getMessage());
         }
     }
@@ -235,7 +239,7 @@ class TranslationWorkflowTest extends KernelTestCase
 
             $this->assertNotEmpty($locales, 'Should extract locale codes from filenames');
             $this->assertCount(count($locales), array_unique($locales), 'Each locale should be unique');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->markTestSkipped('Network test failed: ' . $e->getMessage());
         }
     }
@@ -245,7 +249,7 @@ class TranslationWorkflowTest extends KernelTestCase
      */
     public function testCommandWithoutOptionsExecutesWithoutError(): void
     {
-        $this->expectException(\Throwable::class);
+        $this->expectException(Throwable::class);
 
         // This should throw an exception because options are required
         $this->commandTester->execute([]);
@@ -269,7 +273,7 @@ class TranslationWorkflowTest extends KernelTestCase
             $this->assertStringContainsString('homepage.title', $output);
             $this->assertStringContainsString('es_ES', $output);
             $this->assertStringContainsString('demo_common', $output);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->markTestSkipped('Network test failed: ' . $e->getMessage());
         }
     }
@@ -294,7 +298,7 @@ class TranslationWorkflowTest extends KernelTestCase
                 $this->assertTrue($file->isReadable(), 'File should be readable');
                 $this->assertTrue($file->isWritable(), 'File should be writable');
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->markTestSkipped('Network test failed: ' . $e->getMessage());
         }
     }

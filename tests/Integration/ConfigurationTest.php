@@ -11,6 +11,7 @@
 
 namespace App\Tests\Integration;
 
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
@@ -212,7 +213,7 @@ class ConfigurationTest extends KernelTestCase
         try {
             $data = Yaml::parse($content);
             $this->assertIsArray($data);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->fail('Configuration file has YAML syntax errors: ' . $e->getMessage());
         }
     }

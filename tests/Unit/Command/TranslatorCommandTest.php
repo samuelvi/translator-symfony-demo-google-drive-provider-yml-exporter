@@ -11,6 +11,7 @@
 
 namespace App\Tests\Unit\Command;
 
+use ReflectionClass;
 use App\Command\TranslatorCommand;
 use Atico\SpreadsheetTranslator\Core\SpreadsheetTranslator;
 use PHPUnit\Framework\TestCase;
@@ -19,7 +20,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\BufferedOutput;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -152,15 +152,13 @@ class TranslatorCommandTest extends TestCase
     {
         $input = $this->createMock(InputInterface::class);
         $input->method('hasOption')->willReturn(true);
-        $input->method('getOption')->willReturnCallback(function ($option) {
-            return match ($option) {
-                'sheet-name' => 'test_sheet',
-                'book-name' => 'test_book',
-                default => null,
-            };
+        $input->method('getOption')->willReturnCallback(fn($option): ?string => match ($option) {
+            'sheet-name' => 'test_sheet',
+            'book-name' => 'test_book',
+            default => null,
         });
 
-        $reflection = new \ReflectionClass($this->command);
+        $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('buildParamsFromInput');
 
         $result = $method->invoke($this->command, $input);
@@ -177,7 +175,7 @@ class TranslatorCommandTest extends TestCase
         $input = $this->createMock(InputInterface::class);
         $input->method('hasOption')->willReturn(false);
 
-        $reflection = new \ReflectionClass($this->command);
+        $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('buildParamsFromInput');
 
         $result = $method->invoke($this->command, $input);
@@ -211,7 +209,7 @@ class TranslatorCommandTest extends TestCase
         $this->spreadsheetTranslator
             ->method('processSheet');
 
-        $reflection = new \ReflectionClass($this->command);
+        $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('showTranslatedFragment');
 
         $method->invoke($this->command, $output);

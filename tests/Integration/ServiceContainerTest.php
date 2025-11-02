@@ -11,6 +11,9 @@
 
 namespace App\Tests\Integration;
 
+use ReflectionClass;
+use ReflectionParameter;
+use ReflectionNamedType;
 use App\Command\TranslatorCommand;
 use Atico\SpreadsheetTranslator\Core\SpreadsheetTranslator;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -58,7 +61,7 @@ class ServiceContainerTest extends KernelTestCase
         $container = self::getContainer();
         $command = $container->get(TranslatorCommand::class);
 
-        $reflection = new \ReflectionClass($command);
+        $reflection = new ReflectionClass($command);
         $constructor = $reflection->getConstructor();
 
         $this->assertNotNull($constructor);
@@ -67,7 +70,7 @@ class ServiceContainerTest extends KernelTestCase
         $this->assertCount(2, $parameters, 'TranslatorCommand should have 2 constructor parameters');
 
         $parameterTypes = array_map(
-            fn($param) => $param->getType()?->getName(),
+            fn(ReflectionParameter $param) => $param->getType()?->getName(),
             $parameters
         );
 
@@ -98,7 +101,6 @@ class ServiceContainerTest extends KernelTestCase
         $this->assertTrue($container->hasParameter('kernel.project_dir'));
 
         $projectDir = $container->getParameter('kernel.project_dir');
-        $translationsDir = $projectDir . '/translations';
 
         $this->assertIsString($projectDir);
         $this->assertNotEmpty($projectDir);
@@ -136,12 +138,12 @@ class ServiceContainerTest extends KernelTestCase
         $this->assertInstanceOf(TranslatorCommand::class, $command);
 
         // Dependencies should be injected automatically
-        $reflection = new \ReflectionClass($command);
+        $reflection = new ReflectionClass($command);
         $constructor = $reflection->getConstructor();
 
         foreach ($constructor->getParameters() as $parameter) {
             $type = $parameter->getType();
-            if ($type instanceof \ReflectionNamedType) {
+            if ($type instanceof ReflectionNamedType) {
                 $typeName = $type->getName();
                 if (class_exists($typeName) || interface_exists($typeName)) {
                     $this->assertTrue(

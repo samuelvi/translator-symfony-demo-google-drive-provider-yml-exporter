@@ -11,6 +11,9 @@
 
 namespace App\Tests\Functional;
 
+use Override;
+use Exception;
+use Throwable;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Command\Command;
@@ -36,6 +39,7 @@ class CommandExecutionTest extends KernelTestCase
         $this->translationsDir = $kernel->getProjectDir() . '/translations';
     }
 
+    #[Override]
     protected function tearDown(): void
     {
         $this->cleanUpTestFiles();
@@ -87,14 +91,14 @@ class CommandExecutionTest extends KernelTestCase
 
             $this->assertSame(Command::SUCCESS, $commandTester->getStatusCode());
             $this->assertStringContainsString('Translation text for', $commandTester->getDisplay());
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->markTestSkipped('Network test failed: ' . $e->getMessage());
         }
     }
 
     public function testCommandExecutionWithOnlySheetName(): void
     {
-        $this->expectException(\Throwable::class);
+        $this->expectException(Throwable::class);
 
         $command = $this->application->find('atico:demo:translator');
         $commandTester = new CommandTester($command);
@@ -107,7 +111,7 @@ class CommandExecutionTest extends KernelTestCase
 
     public function testCommandExecutionWithOnlyBookName(): void
     {
-        $this->expectException(\Throwable::class);
+        $this->expectException(Throwable::class);
 
         $command = $this->application->find('atico:demo:translator');
         $commandTester = new CommandTester($command);
@@ -140,7 +144,7 @@ class CommandExecutionTest extends KernelTestCase
                 $output,
                 'Output should contain translation information in expected format'
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->markTestSkipped('Network test failed: ' . $e->getMessage());
         }
     }
@@ -164,7 +168,7 @@ class CommandExecutionTest extends KernelTestCase
             // Check that files are created
             $files = glob($this->translationsDir . '/demo_common.*.yml');
             $this->assertNotEmpty($files, 'Translation files should be created in translations directory');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->markTestSkipped('Network test failed: ' . $e->getMessage());
         }
     }
@@ -189,14 +193,14 @@ class CommandExecutionTest extends KernelTestCase
             $this->assertStringContainsString('es_ES', $output);
             $this->assertStringContainsString('homepage.title', $output);
             $this->assertStringContainsString('demo_common', $output);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->markTestSkipped('Network test failed: ' . $e->getMessage());
         }
     }
 
     public function testCommandWithEmptyStringOptions(): void
     {
-        $this->expectException(\Throwable::class);
+        $this->expectException(Throwable::class);
 
         $command = $this->application->find('atico:demo:translator');
         $commandTester = new CommandTester($command);
@@ -233,14 +237,14 @@ class CommandExecutionTest extends KernelTestCase
             // Both executions should succeed
             $this->assertSame($firstExecution, $secondExecution);
             $this->assertSame(Command::SUCCESS, $secondExecution);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->markTestSkipped('Network test failed: ' . $e->getMessage());
         }
     }
 
     public function testCommandWithVeryLongOptions(): void
     {
-        $this->expectException(\Throwable::class);
+        $this->expectException(Throwable::class);
 
         $command = $this->application->find('atico:demo:translator');
         $commandTester = new CommandTester($command);
@@ -272,7 +276,7 @@ class CommandExecutionTest extends KernelTestCase
             ]);
 
             $this->assertIsInt($commandTester->getStatusCode());
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Sheet doesn't exist - skip this test as it requires network
             $this->markTestSkipped('Sheet with special characters not found: ' . $e->getMessage());
         }
@@ -293,7 +297,7 @@ class CommandExecutionTest extends KernelTestCase
             ]);
 
             $this->assertIsInt($commandTester->getStatusCode());
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Requires network - skip this test
             $this->markTestSkipped('Network test skipped: ' . $e->getMessage());
         }
@@ -315,7 +319,7 @@ class CommandExecutionTest extends KernelTestCase
 
             $output = $commandTester->getDisplay();
             $this->assertNotEmpty($output, 'Command should produce output');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->markTestSkipped('Network test failed: ' . $e->getMessage());
         }
     }
