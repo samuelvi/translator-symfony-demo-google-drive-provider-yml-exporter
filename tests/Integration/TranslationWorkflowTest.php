@@ -246,6 +246,8 @@ class TranslationWorkflowTest extends KernelTestCase
 
     /**
      * Test command execution without options
+     *
+     * @group network
      */
     public function testCommandWithoutOptionsExecutesWithoutError(): void
     {
