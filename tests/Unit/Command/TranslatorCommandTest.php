@@ -55,9 +55,9 @@ final class TranslatorCommandTest extends TestCase
         $this->assertSame('atico:demo:translator', $this->translatorCommand->getName());
         $this->assertSame('Translate From an Excel File to Symfony Translation format', $this->translatorCommand->getDescription());
 
-        $definition = $this->translatorCommand->getDefinition();
-        $this->assertTrue($definition->hasOption('sheet-name'));
-        $this->assertTrue($definition->hasOption('book-name'));
+        $inputDefinition = $this->translatorCommand->getDefinition();
+        $this->assertTrue($inputDefinition->hasOption('sheet-name'));
+        $this->assertTrue($inputDefinition->hasOption('book-name'));
     }
 
     public function testExecuteWithBothOptions(): void
