@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Atico/SpreadsheetTranslator package.
  *
@@ -8,9 +10,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace App\Tests\Functional;
 
+use PHPUnit\Framework\Attributes\Group;
 use Override;
 use Exception;
 use Throwable;
@@ -25,10 +27,12 @@ use Symfony\Component\Filesystem\Filesystem;
  *
  * Tests the command behavior and output from a user perspective
  */
-class CommandExecutionTest extends KernelTestCase
+final class CommandExecutionTest extends KernelTestCase
 {
     private Application $application;
+
     private Filesystem $filesystem;
+
     private string $translationsDir;
 
     protected function setUp(): void
@@ -56,15 +60,15 @@ class CommandExecutionTest extends KernelTestCase
     public function testCommandHasExpectedOptions(): void
     {
         $command = $this->application->find('atico:demo:translator');
-        $definition = $command->getDefinition();
+        $inputDefinition = $command->getDefinition();
 
-        $this->assertTrue($definition->hasOption('sheet-name'));
-        $this->assertTrue($definition->hasOption('book-name'));
+        $this->assertTrue($inputDefinition->hasOption('sheet-name'));
+        $this->assertTrue($inputDefinition->hasOption('book-name'));
 
-        $sheetOption = $definition->getOption('sheet-name');
-        $bookOption = $definition->getOption('book-name');
+        $inputOption = $inputDefinition->getOption('sheet-name');
+        $bookOption = $inputDefinition->getOption('book-name');
 
-        $this->assertFalse($sheetOption->isValueRequired());
+        $this->assertFalse($inputOption->isValueRequired());
         $this->assertFalse($bookOption->isValueRequired());
     }
 
@@ -75,9 +79,7 @@ class CommandExecutionTest extends KernelTestCase
         $this->assertStringContainsString('Translate', $command->getDescription());
     }
 
-    /**
-     * @group network
-     */
+    #[Group('network')]
     public function testCommandExecutionWithValidOptions(): void
     {
         try {
@@ -91,8 +93,8 @@ class CommandExecutionTest extends KernelTestCase
 
             $this->assertSame(Command::SUCCESS, $commandTester->getStatusCode());
             $this->assertStringContainsString('Translation text for', $commandTester->getDisplay());
-        } catch (Exception $e) {
-            $this->markTestSkipped('Network test failed: ' . $e->getMessage());
+        } catch (Exception $exception) {
+            $this->markTestSkipped('Network test failed: ' . $exception->getMessage());
         }
     }
 
@@ -122,9 +124,7 @@ class CommandExecutionTest extends KernelTestCase
         ]);
     }
 
-    /**
-     * @group network
-     */
+    #[Group('network')]
     public function testCommandOutputFormat(): void
     {
         try {
@@ -144,14 +144,12 @@ class CommandExecutionTest extends KernelTestCase
                 $output,
                 'Output should contain translation information in expected format'
             );
-        } catch (Exception $e) {
-            $this->markTestSkipped('Network test failed: ' . $e->getMessage());
+        } catch (Exception $exception) {
+            $this->markTestSkipped('Network test failed: ' . $exception->getMessage());
         }
     }
 
-    /**
-     * @group network
-     */
+    #[Group('network')]
     public function testCommandCreatesFilesInCorrectLocation(): void
     {
         try {
@@ -168,14 +166,12 @@ class CommandExecutionTest extends KernelTestCase
             // Check that files are created
             $files = glob($this->translationsDir . '/demo_common.*.yml');
             $this->assertNotEmpty($files, 'Translation files should be created in translations directory');
-        } catch (Exception $e) {
-            $this->markTestSkipped('Network test failed: ' . $e->getMessage());
+        } catch (Exception $exception) {
+            $this->markTestSkipped('Network test failed: ' . $exception->getMessage());
         }
     }
 
-    /**
-     * @group network
-     */
+    #[Group('network')]
     public function testCommandOutputShowsSpanishTranslation(): void
     {
         try {
@@ -193,8 +189,8 @@ class CommandExecutionTest extends KernelTestCase
             $this->assertStringContainsString('es_ES', $output);
             $this->assertStringContainsString('homepage.title', $output);
             $this->assertStringContainsString('demo_common', $output);
-        } catch (Exception $e) {
-            $this->markTestSkipped('Network test failed: ' . $e->getMessage());
+        } catch (Exception $exception) {
+            $this->markTestSkipped('Network test failed: ' . $exception->getMessage());
         }
     }
 
@@ -212,9 +208,7 @@ class CommandExecutionTest extends KernelTestCase
         ]);
     }
 
-    /**
-     * @group network
-     */
+    #[Group('network')]
     public function testCommandIsIdempotent(): void
     {
         try {
@@ -237,8 +231,8 @@ class CommandExecutionTest extends KernelTestCase
             // Both executions should succeed
             $this->assertSame($firstExecution, $secondExecution);
             $this->assertSame(Command::SUCCESS, $secondExecution);
-        } catch (Exception $e) {
-            $this->markTestSkipped('Network test failed: ' . $e->getMessage());
+        } catch (Exception $exception) {
+            $this->markTestSkipped('Network test failed: ' . $exception->getMessage());
         }
     }
 
@@ -258,12 +252,7 @@ class CommandExecutionTest extends KernelTestCase
         ]);
     }
 
-    /**
-     * Test command handles special characters in options
-     */
-    /**
-     * @group network
-     */
+    #[Group('network')]
     public function testCommandWithSpecialCharacters(): void
     {
         $command = $this->application->find('atico:demo:translator');
@@ -276,15 +265,13 @@ class CommandExecutionTest extends KernelTestCase
             ]);
 
             $this->assertIsInt($commandTester->getStatusCode());
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             // Sheet doesn't exist - skip this test as it requires network
-            $this->markTestSkipped('Sheet with special characters not found: ' . $e->getMessage());
+            $this->markTestSkipped('Sheet with special characters not found: ' . $exception->getMessage());
         }
     }
 
-    /**
-     * @group network
-     */
+    #[Group('network')]
     public function testCommandWithNumericOptions(): void
     {
         $command = $this->application->find('atico:demo:translator');
@@ -297,15 +284,13 @@ class CommandExecutionTest extends KernelTestCase
             ]);
 
             $this->assertIsInt($commandTester->getStatusCode());
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             // Requires network - skip this test
-            $this->markTestSkipped('Network test skipped: ' . $e->getMessage());
+            $this->markTestSkipped('Network test skipped: ' . $exception->getMessage());
         }
     }
 
-    /**
-     * @group network
-     */
+    #[Group('network')]
     public function testCommandOutputIsNotEmpty(): void
     {
         try {
@@ -319,8 +304,8 @@ class CommandExecutionTest extends KernelTestCase
 
             $output = $commandTester->getDisplay();
             $this->assertNotEmpty($output, 'Command should produce output');
-        } catch (Exception $e) {
-            $this->markTestSkipped('Network test failed: ' . $e->getMessage());
+        } catch (Exception $exception) {
+            $this->markTestSkipped('Network test failed: ' . $exception->getMessage());
         }
     }
 

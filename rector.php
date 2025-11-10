@@ -2,40 +2,57 @@
 
 declare(strict_types=1);
 
+use Rector\CodingStyle\Rector\ClassMethod\MakeInheritedMethodVisibilitySameAsParentRector;
 use Rector\Config\RectorConfig;
 use Rector\Doctrine\Set\DoctrineSetList;
-use Rector\Set\ValueObject\LevelSetList;
-use Rector\Set\ValueObject\SetList;
-use Rector\Symfony\Set\SensioSetList;
+use Rector\PHPUnit\Set\PHPUnitSetList;
 use Rector\Symfony\Set\SymfonySetList;
 
-return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->paths([
+return RectorConfig::configure()
+    ->withPaths([
         __DIR__ . '/src',
         __DIR__ . '/tests',
         __DIR__ . '/config',
-    ]);
-
-    // define sets of rules
-    $rectorConfig->sets([
-        // PHP 8.4 compliance
-        LevelSetList::UP_TO_PHP_84,
-        SetList::CODE_QUALITY,
-        SetList::DEAD_CODE,
-        SetList::TYPE_DECLARATION,
-
+    ])
+    ->withPhpSets(php84: true)
+    ->withPreparedSets(
+        deadCode: true,
+        codeQuality: true,
+        codingStyle: true,
+        typeDeclarations: true,
+        privatization: true,
+        earlyReturn: true,
+        instanceOf: true,
+        naming: true
+    )
+    ->withAttributesSets(
+        symfony: true,
+        doctrine: true,
+        phpunit: true
+    )
+    ->withSets([
         // Symfony 7 rules
         SymfonySetList::SYMFONY_70,
         SymfonySetList::SYMFONY_CODE_QUALITY,
         SymfonySetList::SYMFONY_CONSTRUCTOR_INJECTION,
-        DoctrineSetList::DOCTRINE_CODE_QUALITY,
 
-        // Rules for annotations to attributes
+        // Doctrine rules
+        DoctrineSetList::DOCTRINE_CODE_QUALITY,
         DoctrineSetList::ANNOTATIONS_TO_ATTRIBUTES,
 
-    ]);
-
-    // Optionally, import names and remove unused imports
-    $rectorConfig->importNames();
-    $rectorConfig->removeUnusedImports();
-};
+        // PHPUnit rules
+        PHPUnitSetList::PHPUNIT_110,
+        PHPUnitSetList::PHPUNIT_CODE_QUALITY,
+        PHPUnitSetList::ANNOTATIONS_TO_ATTRIBUTES,
+    ])
+    ->withRules([
+        MakeInheritedMethodVisibilitySameAsParentRector::class,
+    ])
+    ->withImportNames(
+        importShortClasses: false,
+        removeUnusedImports: true
+    )
+    ->withParallel()
+    ->withCache(
+        cacheDirectory: __DIR__ . '/var/cache/rector'
+    );

@@ -31,7 +31,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class TranslatorCommand extends Command
 {
     public function __construct(
-        private readonly SpreadsheetTranslator $processor,
+        private readonly SpreadsheetTranslator $spreadsheetTranslator,
         private readonly TranslatorInterface   $translator
     )
     {
@@ -54,14 +54,14 @@ class TranslatorCommand extends Command
 
     protected function buildParamsFromInput(InputInterface $input): array
     {
-        $sheetName = ($input->hasOption('sheet-name')) ? $input->getOption('sheet-name') : '';
-        $bookName = ($input->hasOption('book-name')) ? $input->getOption('book-name') : '';
+        $sheetName = $input->hasOption('sheet-name') ? (string) $input->getOption('sheet-name') : '';
+        $bookName = $input->hasOption('book-name') ? (string) $input->getOption('book-name') : '';
         return ['sheet_name' => $sheetName, 'book_name' => $bookName];
     }
 
     private function doExecute(OutputInterface $output, array $params): void
     {
-        $this->processor->processSheet($params['sheet_name'], $params['book_name']);
+        $this->spreadsheetTranslator->processSheet($params['sheet_name'], $params['book_name']);
 
         $this->showTranslatedFragment($output);
     }

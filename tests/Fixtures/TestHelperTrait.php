@@ -102,8 +102,8 @@ trait TestHelperTrait
         try {
             $data = Yaml::parse($content);
             $this->assertIsArray($data, 'YAML should parse to an array');
-        } catch (Exception $e) {
-            $this->fail('File is not valid YAML: ' . $e->getMessage());
+        } catch (Exception $exception) {
+            $this->fail('File is not valid YAML: ' . $exception->getMessage());
         }
     }
 
@@ -143,7 +143,7 @@ trait TestHelperTrait
         $this->assertDirectoryExists($path);
 
         $files = array_diff(scandir($path), ['.', '..', '.gitignore']);
-        $this->assertEmpty($files, $message ?: "Directory {$path} is not empty");
+        $this->assertEmpty($files, $message ?: sprintf('Directory %s is not empty', $path));
     }
 
     /**
@@ -159,7 +159,7 @@ trait TestHelperTrait
         $this->assertSame(
             $expectedCount,
             $actualCount,
-            $message ?: "Expected {$expectedCount} files, found {$actualCount}"
+            $message ?: sprintf('Expected %d files, found %s', $expectedCount, $actualCount)
         );
     }
 
@@ -212,7 +212,7 @@ trait TestHelperTrait
         $this->assertMatchesRegularExpression(
             '/^[a-z]{2}_[A-Z]{2}$/',
             $locale,
-            $message ?: "Locale '{$locale}' is not valid"
+            $message ?: sprintf("Locale '%s' is not valid", $locale)
         );
     }
 
@@ -231,7 +231,7 @@ trait TestHelperTrait
             $this->assertArrayHasKey(
                 $part,
                 $current,
-                $message ?: "Translation key '{$key}' does not exist in {$filePath}"
+                $message ?: sprintf("Translation key '%s' does not exist in %s", $key, $filePath)
             );
             $current = $current[$part];
         }

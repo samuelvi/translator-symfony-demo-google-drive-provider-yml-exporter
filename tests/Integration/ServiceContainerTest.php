@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Atico/SpreadsheetTranslator package.
  *
@@ -8,7 +10,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace App\Tests\Integration;
 
 use ReflectionClass;
@@ -22,7 +23,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * Tests for Symfony service container configuration
  */
-class ServiceContainerTest extends KernelTestCase
+final class ServiceContainerTest extends KernelTestCase
 {
     protected function setUp(): void
     {
@@ -61,16 +62,16 @@ class ServiceContainerTest extends KernelTestCase
         $container = self::getContainer();
         $command = $container->get(TranslatorCommand::class);
 
-        $reflection = new ReflectionClass($command);
-        $constructor = $reflection->getConstructor();
+        $reflectionClass = new ReflectionClass($command);
+        $constructor = $reflectionClass->getConstructor();
 
-        $this->assertNotNull($constructor);
+        $this->assertInstanceOf(\ReflectionMethod::class, $constructor);
         $parameters = $constructor->getParameters();
 
         $this->assertCount(2, $parameters, 'TranslatorCommand should have 2 constructor parameters');
 
         $parameterTypes = array_map(
-            fn(ReflectionParameter $param) => $param->getType()?->getName(),
+            fn(ReflectionParameter $reflectionParameter) => $reflectionParameter->getType()?->getName(),
             $parameters
         );
 
@@ -138,17 +139,17 @@ class ServiceContainerTest extends KernelTestCase
         $this->assertInstanceOf(TranslatorCommand::class, $command);
 
         // Dependencies should be injected automatically
-        $reflection = new ReflectionClass($command);
-        $constructor = $reflection->getConstructor();
+        $reflectionClass = new ReflectionClass($command);
+        $constructor = $reflectionClass->getConstructor();
 
-        foreach ($constructor->getParameters() as $parameter) {
-            $type = $parameter->getType();
+        foreach ($constructor->getParameters() as $reflectionParameter) {
+            $type = $reflectionParameter->getType();
             if ($type instanceof ReflectionNamedType) {
                 $typeName = $type->getName();
                 if (class_exists($typeName) || interface_exists($typeName)) {
                     $this->assertTrue(
                         $container->has($typeName),
-                        "Container should have service for {$typeName}"
+                        'Container should have service for ' . $typeName
                     );
                 }
             }

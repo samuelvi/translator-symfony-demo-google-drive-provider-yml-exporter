@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Atico/SpreadsheetTranslator package.
  *
@@ -8,7 +10,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace App\Tests\Unit\Command;
 
 use ReflectionClass;
@@ -27,11 +28,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  *
  * Tests the command in isolation by mocking all dependencies
  */
-class TranslatorCommandTest extends TestCase
+final class TranslatorCommandTest extends TestCase
 {
     private MockObject $spreadsheetTranslator;
+
     private MockObject $translator;
-    private TranslatorCommand $command;
+
+    private TranslatorCommand $translatorCommand;
 
     protected function setUp(): void
     {
@@ -44,26 +47,26 @@ class TranslatorCommandTest extends TestCase
             ->addMethods(['setFallbackLocales'])
             ->getMock();
 
-        $this->command = new TranslatorCommand($this->spreadsheetTranslator, $this->translator);
+        $this->translatorCommand = new TranslatorCommand($this->spreadsheetTranslator, $this->translator);
     }
 
     public function testCommandIsConfiguredCorrectly(): void
     {
-        $this->assertSame('atico:demo:translator', $this->command->getName());
-        $this->assertSame('Translate From an Excel File to Symfony Translation format', $this->command->getDescription());
+        $this->assertSame('atico:demo:translator', $this->translatorCommand->getName());
+        $this->assertSame('Translate From an Excel File to Symfony Translation format', $this->translatorCommand->getDescription());
 
-        $definition = $this->command->getDefinition();
+        $definition = $this->translatorCommand->getDefinition();
         $this->assertTrue($definition->hasOption('sheet-name'));
         $this->assertTrue($definition->hasOption('book-name'));
     }
 
     public function testExecuteWithBothOptions(): void
     {
-        $input = new ArrayInput([
+        $arrayInput = new ArrayInput([
             '--sheet-name' => 'common',
             '--book-name' => 'frontend',
         ]);
-        $output = new BufferedOutput();
+        $bufferedOutput = new BufferedOutput();
 
         $this->spreadsheetTranslator
             ->expects($this->once())
@@ -81,18 +84,18 @@ class TranslatorCommandTest extends TestCase
             ->with('homepage.title', [], 'demo_common')
             ->willReturn('Translated text');
 
-        $statusCode = $this->command->run($input, $output);
+        $statusCode = $this->translatorCommand->run($arrayInput, $bufferedOutput);
 
         $this->assertSame(Command::SUCCESS, $statusCode);
-        $this->assertStringContainsString('Translation text for "homepage.title" in "es_ES": "Translated text"', $output->fetch());
+        $this->assertStringContainsString('Translation text for "homepage.title" in "es_ES": "Translated text"', $bufferedOutput->fetch());
     }
 
     public function testExecuteWithSheetNameOnly(): void
     {
-        $input = new ArrayInput([
+        $arrayInput = new ArrayInput([
             '--sheet-name' => 'common',
         ]);
-        $output = new BufferedOutput();
+        $bufferedOutput = new BufferedOutput();
 
         $this->spreadsheetTranslator
             ->expects($this->once())
@@ -103,17 +106,17 @@ class TranslatorCommandTest extends TestCase
             ->method('trans')
             ->willReturn('Translated text');
 
-        $statusCode = $this->command->run($input, $output);
+        $statusCode = $this->translatorCommand->run($arrayInput, $bufferedOutput);
 
         $this->assertSame(Command::SUCCESS, $statusCode);
     }
 
     public function testExecuteWithBookNameOnly(): void
     {
-        $input = new ArrayInput([
+        $arrayInput = new ArrayInput([
             '--book-name' => 'frontend',
         ]);
-        $output = new BufferedOutput();
+        $bufferedOutput = new BufferedOutput();
 
         $this->spreadsheetTranslator
             ->expects($this->once())
@@ -124,15 +127,15 @@ class TranslatorCommandTest extends TestCase
             ->method('trans')
             ->willReturn('Translated text');
 
-        $statusCode = $this->command->run($input, $output);
+        $statusCode = $this->translatorCommand->run($arrayInput, $bufferedOutput);
 
         $this->assertSame(Command::SUCCESS, $statusCode);
     }
 
     public function testExecuteWithNoOptions(): void
     {
-        $input = new ArrayInput([]);
-        $output = new BufferedOutput();
+        $arrayInput = new ArrayInput([]);
+        $bufferedOutput = new BufferedOutput();
 
         $this->spreadsheetTranslator
             ->expects($this->once())
@@ -143,7 +146,7 @@ class TranslatorCommandTest extends TestCase
             ->method('trans')
             ->willReturn('Translated text');
 
-        $statusCode = $this->command->run($input, $output);
+        $statusCode = $this->translatorCommand->run($arrayInput, $bufferedOutput);
 
         $this->assertSame(Command::SUCCESS, $statusCode);
     }
@@ -152,16 +155,16 @@ class TranslatorCommandTest extends TestCase
     {
         $input = $this->createMock(InputInterface::class);
         $input->method('hasOption')->willReturn(true);
-        $input->method('getOption')->willReturnCallback(fn($option): ?string => match ($option) {
+        $input->method('getOption')->willReturnCallback(fn(string $option): ?string => match ($option) {
             'sheet-name' => 'test_sheet',
             'book-name' => 'test_book',
             default => null,
         });
 
-        $reflection = new ReflectionClass($this->command);
-        $method = $reflection->getMethod('buildParamsFromInput');
+        $reflectionClass = new ReflectionClass($this->translatorCommand);
+        $reflectionMethod = $reflectionClass->getMethod('buildParamsFromInput');
 
-        $result = $method->invoke($this->command, $input);
+        $result = $reflectionMethod->invoke($this->translatorCommand, $input);
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey('sheet_name', $result);
@@ -175,10 +178,10 @@ class TranslatorCommandTest extends TestCase
         $input = $this->createMock(InputInterface::class);
         $input->method('hasOption')->willReturn(false);
 
-        $reflection = new ReflectionClass($this->command);
-        $method = $reflection->getMethod('buildParamsFromInput');
+        $reflectionClass = new ReflectionClass($this->translatorCommand);
+        $reflectionMethod = $reflectionClass->getMethod('buildParamsFromInput');
 
-        $result = $method->invoke($this->command, $input);
+        $result = $reflectionMethod->invoke($this->translatorCommand, $input);
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey('sheet_name', $result);
@@ -189,7 +192,7 @@ class TranslatorCommandTest extends TestCase
 
     public function testShowTranslatedFragmentUsesCorrectParameters(): void
     {
-        $output = new BufferedOutput();
+        $bufferedOutput = new BufferedOutput();
 
         $this->translator
             ->expects($this->once())
@@ -200,32 +203,32 @@ class TranslatorCommandTest extends TestCase
             ->expects($this->once())
             ->method('trans')
             ->with(
-                $this->equalTo('homepage.title'),
-                $this->equalTo([]),
-                $this->equalTo('demo_common')
+                'homepage.title',
+                [],
+                'demo_common'
             )
             ->willReturn('Título de inicio seguro del traductor de hojas de cálculo');
 
         $this->spreadsheetTranslator
             ->method('processSheet');
 
-        $reflection = new ReflectionClass($this->command);
-        $method = $reflection->getMethod('showTranslatedFragment');
+        $reflectionClass = new ReflectionClass($this->translatorCommand);
+        $reflectionMethod = $reflectionClass->getMethod('showTranslatedFragment');
 
-        $method->invoke($this->command, $output);
+        $reflectionMethod->invoke($this->translatorCommand, $bufferedOutput);
 
-        $outputText = $output->fetch();
+        $outputText = $bufferedOutput->fetch();
         $this->assertStringContainsString('Translation text for "homepage.title" in "es_ES"', $outputText);
         $this->assertStringContainsString('Título de inicio seguro del traductor de hojas de cálculo', $outputText);
     }
 
     public function testExecuteCallsProcessSheetExactlyOnce(): void
     {
-        $input = new ArrayInput([
+        $arrayInput = new ArrayInput([
             '--sheet-name' => 'test',
             '--book-name' => 'demo',
         ]);
-        $output = new BufferedOutput();
+        $bufferedOutput = new BufferedOutput();
 
         $this->spreadsheetTranslator
             ->expects($this->once())
@@ -235,13 +238,13 @@ class TranslatorCommandTest extends TestCase
             ->method('trans')
             ->willReturn('Test');
 
-        $this->command->run($input, $output);
+        $this->translatorCommand->run($arrayInput, $bufferedOutput);
     }
 
     public function testExecuteReturnsSuccessEvenWithEmptyTranslation(): void
     {
-        $input = new ArrayInput([]);
-        $output = new BufferedOutput();
+        $arrayInput = new ArrayInput([]);
+        $bufferedOutput = new BufferedOutput();
 
         $this->spreadsheetTranslator
             ->method('processSheet');
@@ -250,14 +253,14 @@ class TranslatorCommandTest extends TestCase
             ->method('trans')
             ->willReturn('');
 
-        $statusCode = $this->command->run($input, $output);
+        $statusCode = $this->translatorCommand->run($arrayInput, $bufferedOutput);
 
         $this->assertSame(Command::SUCCESS, $statusCode);
     }
 
     public function testCommandInheritFromSymfonyCommand(): void
     {
-        $this->assertInstanceOf(Command::class, $this->command);
+        $this->assertInstanceOf(Command::class, $this->translatorCommand);
     }
 
     /**
@@ -265,11 +268,11 @@ class TranslatorCommandTest extends TestCase
      */
     public function testExecuteWithSpecialCharactersInOptions(): void
     {
-        $input = new ArrayInput([
+        $arrayInput = new ArrayInput([
             '--sheet-name' => 'common_with-dash',
             '--book-name' => 'frontend.test',
         ]);
-        $output = new BufferedOutput();
+        $bufferedOutput = new BufferedOutput();
 
         $this->spreadsheetTranslator
             ->expects($this->once())
@@ -280,7 +283,7 @@ class TranslatorCommandTest extends TestCase
             ->method('trans')
             ->willReturn('Test');
 
-        $statusCode = $this->command->run($input, $output);
+        $statusCode = $this->translatorCommand->run($arrayInput, $bufferedOutput);
 
         $this->assertSame(Command::SUCCESS, $statusCode);
     }
@@ -290,11 +293,11 @@ class TranslatorCommandTest extends TestCase
      */
     public function testExecuteWithUnicodeCharactersInOptions(): void
     {
-        $input = new ArrayInput([
+        $arrayInput = new ArrayInput([
             '--sheet-name' => 'común',
             '--book-name' => '前端',
         ]);
-        $output = new BufferedOutput();
+        $bufferedOutput = new BufferedOutput();
 
         $this->spreadsheetTranslator
             ->expects($this->once())
@@ -305,7 +308,7 @@ class TranslatorCommandTest extends TestCase
             ->method('trans')
             ->willReturn('Test');
 
-        $statusCode = $this->command->run($input, $output);
+        $statusCode = $this->translatorCommand->run($arrayInput, $bufferedOutput);
 
         $this->assertSame(Command::SUCCESS, $statusCode);
     }

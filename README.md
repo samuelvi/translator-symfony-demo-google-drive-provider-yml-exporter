@@ -103,6 +103,22 @@ Requirements
 Development
 -----------
 
+### Quick Start
+
+Get started quickly with the complete setup:
+
+```bash
+# Complete setup: build, start Docker, and install dependencies
+make setup
+
+# Run the demo
+make demo
+```
+
+### Available Commands
+
+Run `make` or `make help` to see all available commands with descriptions.
+
 ### Testing
 
 This project includes a comprehensive test suite with unit, integration, and functional tests.
@@ -110,9 +126,14 @@ This project includes a comprehensive test suite with unit, integration, and fun
 **Run all tests:**
 
 ```bash
+# Run all tests in Docker
 make test
-# or locally without Docker
+
+# Run all tests locally (without Docker)
 make test-local
+
+# Run tests excluding network-dependent tests (for offline development)
+make test-no-network
 ```
 
 **Run specific test suites:**
@@ -134,16 +155,19 @@ make test-coverage
 **Run tests with PHPUnit directly:**
 
 ```bash
-vendor/bin/phpunit
+bin/phpunit
 
 # Run specific test suite
-vendor/bin/phpunit --testsuite "Unit Tests"
+bin/phpunit --testsuite "Unit Tests"
 
 # Exclude network tests (for offline development)
-vendor/bin/phpunit --exclude-group network
+bin/phpunit --exclude-group network
 
 # Run specific test file
-vendor/bin/phpunit tests/Unit/Command/TranslatorCommandTest.php
+bin/phpunit tests/Unit/Command/TranslatorCommandTest.php
+
+# Run specific test method
+bin/phpunit --filter testExecuteWithBothOptions tests/Unit/Command/TranslatorCommandTest.php
 ```
 
 **Test Structure:**
@@ -161,31 +185,91 @@ This project uses [Rector](https://github.com/rectorphp/rector) to maintain PHP 
 **Run Rector to check for potential improvements:**
 
 ```bash
+# In Docker
 make rector-check
+
+# Locally
+make rector-local-check
 # or
-vendor/rector/rector/bin/rector process --dry-run
+bin/rector process --dry-run
 ```
 
 **Apply Rector changes:**
 
 ```bash
+# In Docker
 make rector-fix
+
+# Locally
+make rector-local-fix
 # or
-vendor/rector/rector/bin/rector process
+bin/rector process
 ```
 
 The rector configuration (`rector.php`) includes:
-- PHP 8.4 compliance rules (`LevelSetList::UP_TO_PHP_84`)
+- PHP 8.4 compliance rules with modern fluent syntax
 - Code quality improvements
-- Dead code removal
+- Dead code removal and privatization
 - Type declaration enhancements
+- Early return patterns and strict booleans
 - Symfony 7.0 best practices
 - Doctrine code quality rules
+- PHPUnit 11.0 rules
 - Annotations to attributes conversion
+- Parallel processing for faster execution
 
-**Example output:**
+### Quality Checks
+
+Run comprehensive quality checks before committing:
+
+```bash
+# Run all quality checks (Rector + Tests without network)
+make quality-check
+
+# Run all CI checks (includes composer validation)
+make ci
 ```
-1 file has been changed by Rector
+
+### Docker Commands
+
+```bash
+# Build Docker images
+make build
+
+# Start services
+make up
+
+# Stop services
+make down
+
+# Restart services
+make restart
+
+# Access PHP container shell
+make shell
+
+# View container logs
+make logs
+```
+
+### Composer Commands
+
+```bash
+# Install dependencies
+make install
+
+# Update dependencies
+make composer-update
+
+# Validate composer.json and composer.lock
+make composer-validate
+```
+
+### Cleanup
+
+```bash
+# Clean generated files, caches, and test artifacts
+make clean
 ```
 
 Contributing

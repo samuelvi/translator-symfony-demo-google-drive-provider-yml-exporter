@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Atico/SpreadsheetTranslator package.
  *
@@ -8,7 +10,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace App\Tests\Integration;
 
 use Exception;
@@ -19,9 +20,10 @@ use Symfony\Component\Yaml\Yaml;
 /**
  * Tests for application configuration
  */
-class ConfigurationTest extends KernelTestCase
+final class ConfigurationTest extends KernelTestCase
 {
     private string $configDir;
+
     private Filesystem $filesystem;
 
     protected function setUp(): void
@@ -87,7 +89,7 @@ class ConfigurationTest extends KernelTestCase
 
         // Validate URL format
         $url = $provider['source_resource'];
-        $this->assertStringContainsString('https://docs.google.com/spreadsheets/', $url);
+        $this->assertStringContainsString('https://docs.google.com/spreadsheets/', (string) $url);
     }
 
     public function testExporterConfigurationIsValid(): void
@@ -104,7 +106,7 @@ class ConfigurationTest extends KernelTestCase
         $this->assertSame('demo_', $exporter['prefix']);
 
         $this->assertArrayHasKey('destination_folder', $exporter);
-        $this->assertStringContainsString('translations', $exporter['destination_folder']);
+        $this->assertStringContainsString('translations', (string) $exporter['destination_folder']);
     }
 
     public function testSharedConfigurationIsValid(): void
@@ -141,8 +143,8 @@ class ConfigurationTest extends KernelTestCase
         $destinationFolder = $data['atico_spreadsheet_translator']['frontend']['exporter']['destination_folder'];
 
         // Should contain kernel.project_dir parameter
-        $this->assertStringContainsString('%kernel.project_dir%', $destinationFolder);
-        $this->assertStringContainsString('/translations', $destinationFolder);
+        $this->assertStringContainsString('%kernel.project_dir%', (string) $destinationFolder);
+        $this->assertStringContainsString('/translations', (string) $destinationFolder);
     }
 
     public function testGoogleDriveUrlIsAccessible(): void
@@ -213,8 +215,8 @@ class ConfigurationTest extends KernelTestCase
         try {
             $data = Yaml::parse($content);
             $this->assertIsArray($data);
-        } catch (Exception $e) {
-            $this->fail('Configuration file has YAML syntax errors: ' . $e->getMessage());
+        } catch (Exception $exception) {
+            $this->fail('Configuration file has YAML syntax errors: ' . $exception->getMessage());
         }
     }
 
@@ -223,8 +225,8 @@ class ConfigurationTest extends KernelTestCase
         // Test for environment-specific configs if they exist
         $environments = ['dev', 'prod', 'test'];
 
-        foreach ($environments as $env) {
-            $envConfigDir = $this->configDir . '/packages/' . $env;
+        foreach ($environments as $environment) {
+            $envConfigDir = $this->configDir . '/packages/' . $environment;
             if ($this->filesystem->exists($envConfigDir)) {
                 $this->assertDirectoryExists($envConfigDir);
             }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Atico/SpreadsheetTranslator package.
  *
@@ -8,9 +10,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace App\Tests\Integration;
 
+use PHPUnit\Framework\Attributes\Group;
 use Override;
 use Exception;
 use Throwable;
@@ -27,10 +29,12 @@ use Symfony\Component\Yaml\Yaml;
  *
  * Tests the command with real Symfony services and configuration
  */
-class TranslationWorkflowTest extends KernelTestCase
+final class TranslationWorkflowTest extends KernelTestCase
 {
     private Filesystem $filesystem;
+
     private string $translationsDir;
+
     private CommandTester $commandTester;
 
     protected function setUp(): void
@@ -78,9 +82,8 @@ class TranslationWorkflowTest extends KernelTestCase
     /**
      * This test requires network access to Google Drive
      * Mark as risky or skip if running in offline mode
-     *
-     * @group network
      */
+    #[Group('network')]
     public function testCommandExecutesSuccessfully(): void
     {
         try {
@@ -94,14 +97,12 @@ class TranslationWorkflowTest extends KernelTestCase
 
             $output = $this->commandTester->getDisplay();
             $this->assertStringContainsString('Translation text for', $output);
-        } catch (Exception $e) {
-            $this->markTestSkipped('Network test failed - Google Drive may be unavailable: ' . $e->getMessage());
+        } catch (Exception $exception) {
+            $this->markTestSkipped('Network test failed - Google Drive may be unavailable: ' . $exception->getMessage());
         }
     }
 
-    /**
-     * @group network
-     */
+    #[Group('network')]
     public function testTranslationFilesAreCreated(): void
     {
         try {
@@ -120,14 +121,12 @@ class TranslationWorkflowTest extends KernelTestCase
                 $this->assertFileExists($file->getRealPath());
                 $this->assertFileIsReadable($file->getRealPath());
             }
-        } catch (Exception $e) {
-            $this->markTestSkipped('Network test failed: ' . $e->getMessage());
+        } catch (Exception $exception) {
+            $this->markTestSkipped('Network test failed: ' . $exception->getMessage());
         }
     }
 
-    /**
-     * @group network
-     */
+    #[Group('network')]
     public function testTranslationFilesHaveValidYamlFormat(): void
     {
         try {
@@ -148,14 +147,12 @@ class TranslationWorkflowTest extends KernelTestCase
                 $this->assertIsArray($data, 'YAML content should parse to an array');
                 $this->assertNotEmpty($data, 'Parsed YAML should not be empty');
             }
-        } catch (Exception $e) {
-            $this->markTestSkipped('Network test failed: ' . $e->getMessage());
+        } catch (Exception $exception) {
+            $this->markTestSkipped('Network test failed: ' . $exception->getMessage());
         }
     }
 
-    /**
-     * @group network
-     */
+    #[Group('network')]
     public function testTranslationFilesContainExpectedKeys(): void
     {
         try {
@@ -178,14 +175,12 @@ class TranslationWorkflowTest extends KernelTestCase
                     $this->assertArrayHasKey('title', $data['homepage'], 'homepage should contain title key');
                 }
             }
-        } catch (Exception $e) {
-            $this->markTestSkipped('Network test failed: ' . $e->getMessage());
+        } catch (Exception $exception) {
+            $this->markTestSkipped('Network test failed: ' . $exception->getMessage());
         }
     }
 
-    /**
-     * @group network
-     */
+    #[Group('network')]
     public function testCorrectFileNamingConvention(): void
     {
         try {
@@ -207,14 +202,12 @@ class TranslationWorkflowTest extends KernelTestCase
                     'Filename should match pattern: demo_common.{locale}.yml'
                 );
             }
-        } catch (Exception $e) {
-            $this->markTestSkipped('Network test failed: ' . $e->getMessage());
+        } catch (Exception $exception) {
+            $this->markTestSkipped('Network test failed: ' . $exception->getMessage());
         }
     }
 
-    /**
-     * @group network
-     */
+    #[Group('network')]
     public function testMultipleLocalesAreGenerated(): void
     {
         try {
@@ -239,16 +232,15 @@ class TranslationWorkflowTest extends KernelTestCase
 
             $this->assertNotEmpty($locales, 'Should extract locale codes from filenames');
             $this->assertCount(count($locales), array_unique($locales), 'Each locale should be unique');
-        } catch (Exception $e) {
-            $this->markTestSkipped('Network test failed: ' . $e->getMessage());
+        } catch (Exception $exception) {
+            $this->markTestSkipped('Network test failed: ' . $exception->getMessage());
         }
     }
 
     /**
      * Test command execution without options
-     *
-     * @group network
      */
+    #[Group('network')]
     public function testCommandWithoutOptionsExecutesWithoutError(): void
     {
         $this->expectException(Throwable::class);
@@ -259,9 +251,8 @@ class TranslationWorkflowTest extends KernelTestCase
 
     /**
      * Test command output contains expected information
-     *
-     * @group network
      */
+    #[Group('network')]
     public function testCommandOutputContainsTranslationInfo(): void
     {
         try {
@@ -275,16 +266,15 @@ class TranslationWorkflowTest extends KernelTestCase
             $this->assertStringContainsString('homepage.title', $output);
             $this->assertStringContainsString('es_ES', $output);
             $this->assertStringContainsString('demo_common', $output);
-        } catch (Exception $e) {
-            $this->markTestSkipped('Network test failed: ' . $e->getMessage());
+        } catch (Exception $exception) {
+            $this->markTestSkipped('Network test failed: ' . $exception->getMessage());
         }
     }
 
     /**
      * Test file permissions are correct
-     *
-     * @group network
      */
+    #[Group('network')]
     public function testGeneratedFilesHaveCorrectPermissions(): void
     {
         try {
@@ -300,8 +290,8 @@ class TranslationWorkflowTest extends KernelTestCase
                 $this->assertTrue($file->isReadable(), 'File should be readable');
                 $this->assertTrue($file->isWritable(), 'File should be writable');
             }
-        } catch (Exception $e) {
-            $this->markTestSkipped('Network test failed: ' . $e->getMessage());
+        } catch (Exception $exception) {
+            $this->markTestSkipped('Network test failed: ' . $exception->getMessage());
         }
     }
 
