@@ -5,7 +5,8 @@
   "description": "Spreadsheet Translator. Symfony Demo Application. Takes a Google Drive spreadsheet and creates translation files per locale in YAML format",
   "autoload": {
     "psr-4": {
-      "App\\": "src/App"
+      "App\\": "src/App",
+      "Atico\\SpreadsheetTranslator\\Core\\": "src/Atico/SpreadsheetTranslator/Core"
     }
   },
   "require": {
