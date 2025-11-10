@@ -42,8 +42,8 @@ class SpreadsheetTranslator
         $bookName = $this->resolveBookName($bookName);
         $wrappedConfiguration = $this->wrapConfigurationForProcessor($bookName);
 
-        $processor = new SheetProcessor($wrappedConfiguration);
-        $processor->processSheet($sheetName);
+        $sheetProcessor = new SheetProcessor($wrappedConfiguration);
+        $sheetProcessor->processSheet($sheetName);
     }
 
     /**
@@ -57,24 +57,23 @@ class SpreadsheetTranslator
         $bookName = $this->resolveBookName($bookName);
         $wrappedConfiguration = $this->wrapConfigurationForProcessor($bookName);
 
-        $processor = new BookProcessor($wrappedConfiguration);
-        $processor->processBook();
+        $bookProcessor = new BookProcessor($wrappedConfiguration);
+        $bookProcessor->processBook();
     }
 
     /**
      * Resolve the book name, using the first available if not provided
      *
-     * @param string $bookName
-     * @return string
      * @throws Exception
      */
     private function resolveBookName(string $bookName): string
     {
-        if (empty($bookName)) {
+        if ($bookName === '' || $bookName === '0') {
             $keys = array_keys($this->configuration);
-            if (empty($keys)) {
+            if ($keys === []) {
                 throw new Exception('No configuration available');
             }
+
             return $keys[0];
         }
 
@@ -89,7 +88,6 @@ class SpreadsheetTranslator
      * Wrap configuration in the format expected by Configuration class
      * The Configuration class expects: array_values($config)[0][$groupName]
      *
-     * @param string $bookName
      * @return array<string, mixed>
      */
     private function wrapConfigurationForProcessor(string $bookName): array
